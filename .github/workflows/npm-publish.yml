@@ -1,0 +1,41 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js 20
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Deploy to Client 1
+      if: github.ref == 'refs/heads/main'
+      env:
+        DEPLOY_SSH_KEY: ${{ secrets.CLIENT1_SSH_KEY }}
+        ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
+      run: |
+        echo "$ENV_CONTENTS" > .env
+        scp -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") .env app.js user@client1-host:/var/www/client1_backend
+        ssh -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") user@client1-host 'cd /var/www/client1_backend && pm2 start --node-args="--env-file=.env" app.js'
+
+    - name: Deploy to Client 2
+      if: github.ref == 'refs/heads/main'
+      env:
+        DEPLOY_SSH_KEY: ${{ secrets.CLIENT2_SSH_KEY }}
+        ENV_CONTENTS: ${{ secrets.CLIENT2_ENV }}
+      run: |
+        echo "$ENV_CONTENTS" > .env
+        scp -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") .env app.js user@client2-host:/var/www/client2_backend
+        ssh -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") user@client2-host 'cd /var/www/client2_backend && pm2 start --node-args="--env-file=.env" app.js'
