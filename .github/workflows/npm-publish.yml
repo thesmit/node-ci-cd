@@ -27,8 +27,8 @@ jobs:
         ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
       run: |
         echo "$ENV_CONTENTS" > .env
-        scp -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") .env app.js mlora1@192.168.29.188:/var/www/client1_backend
-        ssh -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") thingsboard1@192.168.29.32 'cd /var/www/client1_backend && pm2 start --node-args="--env-file=.env" app.js'
+        scp -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") .env app.js thingsboard1@tracker.memighty.com:/var/www/client1_backend
+        ssh -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") thingsboard1@tracker.memighty.com 'cd /var/www/client1_backend && pm2 start --node-args="--env-file=.env" app.js'
 
     - name: Deploy to Client 2
       if: github.ref == 'refs/heads/main'
@@ -37,5 +37,5 @@ jobs:
         ENV_CONTENTS: ${{ secrets.CLIENT2_ENV }}
       run: |
         echo "$ENV_CONTENTS" > .env
-        scp -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") .env app.js thingsboard1@192.168.29.32:/var/www/client2_backend
-        ssh -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") thingsboard1@192.168.29.32 'cd /var/www/client2_backend && pm2 start --node-args="--env-file=.env" app.js'
+        scp -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") .env app.js mlora1@testtracker.ddnsfree.com/:/var/www/client2_backend
+        ssh -o StrictHostKeyChecking=no -i <(echo "$DEPLOY_SSH_KEY") mlora1@testtracker.ddnsfree.com/ 'cd /var/www/client2_backend && pm2 start --node-args="--env-file=.env" app.js'
