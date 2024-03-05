@@ -29,8 +29,8 @@ jobs:
         echo "$ENV_CONTENTS" > .env
         echo "$DEPLOY_SSH_KEY" > deploy_key
         chmod 600 deploy_key
-        scp -o StrictHostKeyChecking=no -i deploy_key .env app.js ubuntu@work.memighty.com:/var/www/client1_backend
-        ssh -o StrictHostKeyChecking=no -i deploy_key ubuntu@work.memighty.com 'cd /var/www/client1_backend && pm2 start --node-args="--env-file=.env" app.js'
+        rsync -avz --exclude=node_modules --exclude=.git --exclude=deploy_key -e "ssh -o StrictHostKeyChecking=no -i deploy_key" ./ ubuntu@work.memighty.com:/var/www/client1_backend/
+        ssh -o StrictHostKeyChecking=no -i deploy_key ubuntu@work.memighty.com 'cd /var/www/client1_backend && npm install && pm2 start --node-args="--env-file=.env" app.js'
         rm -f deploy_key
 
     - name: Deploy to Client 2
