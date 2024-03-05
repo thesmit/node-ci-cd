@@ -29,7 +29,7 @@ jobs:
         echo "$ENV_CONTENTS" > .env
         echo "$DEPLOY_SSH_KEY" > deploy_key
         chmod 600 deploy_key
-        rsync -avz --no-perms --exclude=node_modules --exclude=.git --exclude=deploy_key --exclude=.env* --exclude=.github/ -e "ssh -o StrictHostKeyChecking=no -i deploy_key" ./ ubuntu@work.memighty.com:/var/www/client1_backend/
+        rsync -avz --no-perms --no-times --exclude=node_modules --exclude=.git --exclude=deploy_key --exclude=.env* --exclude=.github/ -e "ssh -o StrictHostKeyChecking=no -i deploy_key" ./ ubuntu@work.memighty.com:/var/www/client1_backend/
         ssh -o StrictHostKeyChecking=no -i deploy_key ubuntu@work.memighty.com 'cd /var/www/client1_backend && npm install && pm2 start --node-args="--env-file=.env" app.js'
         rm -f deploy_key
 
@@ -42,7 +42,7 @@ jobs:
         echo "$ENV_CONTENTS" > .env
         echo "$DEPLOY_SSH_KEY" > deploy_key
         chmod 600 deploy_key
-        rsync -avz --no-perms --exclude=node_modules --exclude=.git --exclude=deploy_key --exclude=.env* --exclude=.github/ -e "ssh -o StrictHostKeyChecking=no -i deploy_key" ./ mlora1@testtracker.ddnsfree.com:/var/www/client2_backend/
+        rsync -avz --no-perms --no-times --exclude=node_modules --exclude=.git --exclude=deploy_key --exclude=.env* --exclude=.github/ -e "ssh -o StrictHostKeyChecking=no -i deploy_key" ./ mlora1@testtracker.ddnsfree.com:/var/www/client2_backend/
         ssh -o StrictHostKeyChecking=no -i deploy_key mlora1@testtracker.ddnsfree.com 'cd /var/www/client2_backend && npm install && pm2 start --node-args="--env-file=.env" app.js'
         rm -f deploy_key
 
