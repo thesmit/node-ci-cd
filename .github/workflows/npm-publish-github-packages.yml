@@ -42,7 +42,7 @@ jobs:
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
           npm install
-          pm2 start --node-args='--env-file=.env' app.js
+          pm2 restart --node-args='--env-file=.env' app.js || pm2 start --node-args='--env-file=.env' app.js
 
     - name: Setup Node.js for Frontend
       uses: actions/setup-node@v2
