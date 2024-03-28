@@ -24,9 +24,9 @@ jobs:
 
     - name: Deploy Backend
       env:
-        CLIENT1_ENV: ${{ secrets.CLIENT1_ENV }}
+        ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
       run: |
-        echo "$CLIENT1_ENV" > .env
+        echo "$ENV_CONTENTS" > .env
         rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
         scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
 
