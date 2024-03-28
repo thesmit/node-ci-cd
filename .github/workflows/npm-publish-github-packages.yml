@@ -39,6 +39,7 @@ jobs:
         script: |
           exec bash \-l
           cd /var/www/client2_backend
+          whoami
           npm install
           pm2 start --node-args="--env-file=.env" app.js
           
