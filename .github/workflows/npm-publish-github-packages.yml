@@ -26,7 +26,7 @@ jobs:
       env:
         CLIENT1_ENV: ${{ secrets.CLIENT1_ENV }}
       run: |
-        echo "CLIENT1_ENV" > .env
+        echo "$CLIENT1_ENV" > .env
         rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
         scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
 
