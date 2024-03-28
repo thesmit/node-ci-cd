@@ -51,7 +51,10 @@ jobs:
         working-directory: ./frontend
 
     - name: Build Frontend
+      env:
+        CLIENT1_FRONTEND_ENV: ${{ secrets.CLIENT1_REACT_APP_MESSAGE }}
       run: |
+        echo "$CLIENT1_FRONTEND_ENV" > frontend/.env
         cd frontend
         npm install
         npm run build
