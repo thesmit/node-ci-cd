@@ -1,0 +1,45 @@
+name: Deploy to Client's Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20' # Replace '14' with the version you use
+
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.THINGSBOARD_SSH }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
+
+    - name: Deploy Backend
+      run: |
+        ssh thingsboard1@192.168.29.32 <<EOF
+          cat > /var/www/client1_backend/.env <<EOL
+          $CLIENT1_ENV
+          EOL
+          cd /var/www/client1_backend
+          npm install
+          pm2 restart app.js || pm2 start app.js
+        EOF
+      env:
+        CLIENT1_ENV: ${{ secrets.CLIENT1_ENV }}
+
+    - name: Build and Deploy Frontend
+      run: |
+        cd client1_frontend
+        npm install
+        npm run build
+        rsync -av --delete ./build/ thingsboard1@192.168.29.32:/var/www/client1_frontend/
