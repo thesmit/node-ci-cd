@@ -3,10 +3,6 @@ name: Deploy to Client's Server
 on:
   workflow_dispatch:
 
-  # push:
-  #   branches:
-  #     - main
-
 jobs:
   deploy:
     runs-on: self-hosted
@@ -17,7 +13,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '20' # Replace '14' with the version you use
+        node-version: '20'
 
     - name: Setup SSH key
       run: |
@@ -28,7 +24,8 @@ jobs:
 
     - name: Deploy Backend
       run: |
-        ssh thingsboard1@192.168.29.32 <<EOF
+        ssh -T thingsboard1@192.168.29.32 <<EOF
+          mkdir -p /var/www/client2_backend
           cat > /var/www/client2_backend/.env <<EOL
           $CLIENT1_ENV
           EOL
@@ -38,10 +35,3 @@ jobs:
         EOF
       env:
         CLIENT1_ENV: ${{ secrets.CLIENT1_ENV }}
-
-    # - name: Build and Deploy Frontend
-    #   run: |
-    #     cd client1_frontend
-    #     npm install
-    #     npm run build
-    #     rsync -av --delete ./build/ thingsboard1@192.168.29.32:/var/www/client2_frontend/
