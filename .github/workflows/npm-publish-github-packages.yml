@@ -27,8 +27,8 @@ jobs:
         ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
       run: |
         echo "$ENV_CONTENTS" > .env
-        scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
-        #rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
+        # scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
+        rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
 
     - name: install
       uses: appleboy/ssh-action@v1.0.3
