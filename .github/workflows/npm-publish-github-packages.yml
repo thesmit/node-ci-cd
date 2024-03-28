@@ -28,10 +28,10 @@ jobs:
       run: |
         echo "CLIENT1_ENV" > .env
         rsync -avz --exclude '.github/' ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
-        scp .env thingsboard1@192.168.29.32:/var/www/client1_backend/
+        scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
         # Install dependencies and start the application
         ssh server_user@192.168.29.32 << 'EOF'
-          cd /var/www/client1_backend
+          cd /var/www/client2_backend
           npm install
           pm2 start --node-args="--env-file=.env" app.js
         EOF
