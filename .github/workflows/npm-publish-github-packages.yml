@@ -27,7 +27,7 @@ jobs:
         CLIENT1_ENV: ${{ secrets.CLIENT1_ENV }}
       run: |
         echo "CLIENT1_ENV" > .env
-        rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
+        rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
         scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
         # Install dependencies and start the application
         ssh server_user@192.168.29.32 << 'EOF'
