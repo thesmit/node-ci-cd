@@ -37,7 +37,7 @@ jobs:
         username: thingsboard1
         key: ${{ secrets.THINGSBOARD_SSH }}
         script: |
-          exec bash \-l
+          # exec bash \-l
           cd /var/www/client2_backend
           whoami
           npm install
