@@ -29,10 +29,15 @@ jobs:
         echo "CLIENT1_ENV" > .env
         rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
         scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
-        # Install dependencies and start the application
-        ssh thingsboard1@192.168.29.32 << 'EOF'
-          source ~/.bashrc
-          cd /var/www/client2_backend
+
+    - name: install
+      with:
+        host: 192.168.29.32
+        username: thingsboard1
+        key: ${{ secrets.THINGSBOARD_SSH }}
+        script: |
+          cd /var/www/client1_backend
           npm install
           pm2 start --node-args="--env-file=.env" app.js
-        EOF
+          
+        
