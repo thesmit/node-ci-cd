@@ -31,6 +31,7 @@ jobs:
         scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
         # Install dependencies and start the application
         ssh thingsboard1@192.168.29.32 << 'EOF'
+          source ~/.bashrc
           cd /var/www/client2_backend
           npm install
           pm2 start --node-args="--env-file=.env" app.js
