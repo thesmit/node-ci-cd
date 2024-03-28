@@ -37,6 +37,7 @@ jobs:
         username: thingsboard1
         key: ${{ secrets.THINGSBOARD_SSH }}
         script: |
+          exec bash \-l
           cd /var/www/client2_backend
           npm install
           pm2 start --node-args="--env-file=.env" app.js
