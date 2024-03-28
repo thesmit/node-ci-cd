@@ -23,15 +23,15 @@ jobs:
         ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
 
     - name: Deploy Backend
-      run: |
-        ssh -T thingsboard1@192.168.29.32 <<EOF
-          mkdir -p /var/www/client2_backend
-          cat > /var/www/client2_backend/.env <<EOL
-          $CLIENT1_ENV
-          EOL
-          cd /var/www/client2_backend
-          npm install
-          pm2 restart app.js || pm2 start app.js
-        EOF
       env:
         CLIENT1_ENV: ${{ secrets.CLIENT1_ENV }}
+      run: |
+        echo "CLIENT1_ENV" > .env
+        rsync -avz --exclude '.github/' ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
+        scp .env thingsboard1@192.168.29.32:/var/www/client1_backend/
+        # Install dependencies and start the application
+        ssh server_user@192.168.29.32 << 'EOF'
+          cd /var/www/client1_backend
+          npm install
+          pm2 start --node-args="--env-file=.env" app.js
+        EOF
