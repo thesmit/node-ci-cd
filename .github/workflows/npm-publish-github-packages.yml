@@ -1,0 +1,48 @@
+name: Deploy to Client's Server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.THINGSBOARD_SSH }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
+
+    - name: Deploy Backend
+      env:
+        ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
+      run: |
+        echo "$ENV_CONTENTS" > .env
+        # scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
+        rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
+
+    - name: install
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: 192.168.29.32
+        username: thingsboard1
+        key: ${{ secrets.THINGSBOARD_SSH }}
+        script: |
+          cd /var/www/client2_backend
+          whoami
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          npm install
+          pm2 start --node-args='--env-file=.env' app.js
+
+          
+        
