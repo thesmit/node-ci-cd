@@ -27,10 +27,10 @@ jobs:
     - name: Deploy Backend
       run: |
         ssh thingsboard1@192.168.29.32 <<EOF
-          cat > /var/www/client1_backend/.env <<EOL
+          cat > /var/www/client2_backend/.env <<EOL
           $CLIENT1_ENV
           EOL
-          cd /var/www/client1_backend
+          cd /var/www/client2_backend
           npm install
           pm2 restart app.js || pm2 start app.js
         EOF
@@ -42,4 +42,4 @@ jobs:
         cd client1_frontend
         npm install
         npm run build
-        rsync -av --delete ./build/ thingsboard1@192.168.29.32:/var/www/client1_frontend/
+        rsync -av --delete ./build/ thingsboard1@192.168.29.32:/var/www/client2_frontend/
