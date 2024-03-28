@@ -39,9 +39,9 @@ jobs:
       env:
         CLIENT1_ENV: ${{ secrets.CLIENT1_ENV }}
 
-    - name: Build and Deploy Frontend
-      run: |
-        cd client1_frontend
-        npm install
-        npm run build
-        rsync -av --delete ./build/ thingsboard1@192.168.29.32:/var/www/client2_frontend/
+    # - name: Build and Deploy Frontend
+    #   run: |
+    #     cd client1_frontend
+    #     npm install
+    #     npm run build
+    #     rsync -av --delete ./build/ thingsboard1@192.168.29.32:/var/www/client2_frontend/
