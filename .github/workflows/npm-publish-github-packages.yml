@@ -37,12 +37,12 @@ jobs:
         username: thingsboard1
         key: ${{ secrets.THINGSBOARD_SSH }}
         script: |
-          exec bash -l -c "
           cd /var/www/client2_backend
           whoami
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
           npm install
           pm2 start --node-args='--env-file=.env' app.js
-          "
 
           
         
