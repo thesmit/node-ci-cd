@@ -10,10 +10,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup Node.js
+    - name: Setup Node.js for Backend
       uses: actions/setup-node@v2
       with:
         node-version: '20'
+        working-directory: ./backend
 
     - name: Setup SSH key
       run: |
@@ -26,11 +27,10 @@ jobs:
       env:
         ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
       run: |
-        echo "$ENV_CONTENTS" > .env
-        # scp .env thingsboard1@192.168.29.32:/var/www/client2_backend/
-        rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./ thingsboard1@192.168.29.32:/var/www/client2_backend/
+        echo "$ENV_CONTENTS" > backend/.env
+        rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./backend/ thingsboard1@192.168.29.32:/var/www/client2_backend/
 
-    - name: install
+    - name: Install and Start Backend
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: 192.168.29.32
@@ -44,5 +44,18 @@ jobs:
           npm install
           pm2 start --node-args='--env-file=.env' app.js
 
-          
-        
+    - name: Setup Node.js for Frontend
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+        working-directory: ./frontend
+
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm install
+        npm run build
+
+    - name: Deploy Frontend
+      run: |
+        rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./frontend/build/ thingsboard1@192.168.29.32:/var/www/client2_frontend/
