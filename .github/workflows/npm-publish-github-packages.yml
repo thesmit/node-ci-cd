@@ -23,13 +23,8 @@ jobs:
     #     chmod 600 ~/.ssh/id_rsa
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
 
-    - name: Install SSH key
-      uses: webfactory/ssh-agent@v0.5.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
     - name: Check SSH Key
-      run: ssh memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+      run: ssh -i $HOME/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
