@@ -24,7 +24,7 @@ jobs:
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
 
     - name: Check SSH Key
-      run: ssh -i $HOME/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+      run: ssh -i ':c/users/Memighty IT/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
