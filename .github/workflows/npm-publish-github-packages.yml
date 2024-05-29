@@ -25,10 +25,9 @@ jobs:
 
     - name: Check SSH Key
       run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
-        chmod 600 ./id_rsa
-        cat ./id_rsa
-        ssh -i ./id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
+          icacls ./id_rsa /grant:r "$env:USERNAME:(R)"
+          ssh -i ./id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
