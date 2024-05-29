@@ -23,11 +23,10 @@ jobs:
     #     chmod 600 ~/.ssh/id_rsa
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
 
-
     - name: Check SSH Key
       run: |
-          $userProfile = [Environment]::GetFolderPath("UserProfile")
-          ssh -i "$userProfile/.ssh/id_rsa" memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+          $sshKeyPath = "$env:USERPROFILE\\.ssh\\id_rsa"
+          ssh -i $sshKeyPath memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
