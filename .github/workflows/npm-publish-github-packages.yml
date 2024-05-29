@@ -23,17 +23,22 @@ jobs:
     #     chmod 600 ~/.ssh/id_rsa
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
     
-
     - name: Add SSH Key
+      shell: pwsh
       run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan 192.168.29.120 >> ~/.ssh/known_hosts
+          $sshDir = "$HOME/.ssh"
+          if (-Not (Test-Path -Path $sshDir)) {
+            New-Item -ItemType Directory -Path $sshDir
+          }
+          Set-Content -Path "$sshDir/id_rsa" -Value "${{ secrets.SSH_PRIVATE_KEY }}" -Force
+          icacls "$sshDir/id_rsa" /inheritance:r
+          icacls "$sshDir/id_rsa" /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(R,W)"
+          ssh-keyscan 192.168.29.120 | Out-File -Append -Encoding ASCII "$sshDir/known_hosts"
 
     - name: Check SSH Key
+      shell: pwsh
       run: |
-          ssh -i ~/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+          ssh -i $HOME/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
