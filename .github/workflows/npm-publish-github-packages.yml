@@ -16,19 +16,19 @@ jobs:
         node-version: '20'
         working-directory: ./backend
 
-    - name: Setup SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.THINGSBOARD_SSH }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
+    # - name: Setup SSH key
+    #   run: |
+    #     mkdir -p ~/.ssh
+    #     echo "${{ secrets.THINGSBOARD_SSH }}" > ~/.ssh/id_rsa
+    #     chmod 600 ~/.ssh/id_rsa
+    #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
 
     - name: Deploy Backend
       env:
         ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
       run: |
         echo "$ENV_CONTENTS" > backend/.env
-        rsync -avz --no-group --exclude '.git/' --exclude '.github/' --no-perms --no-times ./backend/ thingsboard1@192.168.29.32:/var/www/client2_backend/
+        scp -r ./backend/ memighty-test-server@192.168.29.120:/var/www/
 
     - name: Install and Start Backend
       uses: appleboy/ssh-action@v1.0.3
