@@ -28,7 +28,7 @@ jobs:
         ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
       run: |
         echo "$ENV_CONTENTS" > backend/.env
-        scp -o StrictHostKeyChecking=no -r ./backend/ memighty-test-server@192.168.29.120:/var/www/
+        scp -r ./backend/ memighty-test-server@192.168.29.120:/var/www/
 
     - name: Install and Start Backend
       uses: appleboy/ssh-action@v1.0.3
