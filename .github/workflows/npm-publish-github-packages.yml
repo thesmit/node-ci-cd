@@ -22,22 +22,21 @@ jobs:
     #     echo "${{ secrets.THINGSBOARD_SSH }}" > ~/.ssh/id_rsa
     #     chmod 600 ~/.ssh/id_rsa
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
-    - name: Start SSH Agent
+
+    - name: Prepare SSH Key
       shell: pwsh
       run: |
-          Start-Service ssh-agent
-          Get-Service ssh-agent
-    
-    - name: Add SSH Key to Agent
-      shell: pwsh
-      run: |
-          $env:SSH_PRIVATE_KEY | Out-File -FilePath $env:GITHUB_WORKSPACE\id_rsa -Encoding ascii
-          ssh-add $env:GITHUB_WORKSPACE\id_rsa
+          $privateKey = "${{ secrets.SSH_PRIVATE_KEY }}"
+          $privateKey | Out-File -FilePath "$env:GITHUB_WORKSPACE\id_rsa" -Encoding ascii
+          icacls "$env:GITHUB_WORKSPACE\id_rsa" /inheritance:r
+          icacls "$env:GITHUB_WORKSPACE\id_rsa" /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(F)"
+          icacls "$env:GITHUB_WORKSPACE\id_rsa" /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(R,W)"
+          ssh-keyscan 192.168.29.120 | Out-File -Append -Encoding ASCII "$env:GITHUB_WORKSPACE\known_hosts"
 
     - name: Check SSH Key
       shell: pwsh
       run: |
-          ssh -o StrictHostKeyChecking=no memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+          ssh -i "$env:GITHUB_WORKSPACE\id_rsa" -o UserKnownHostsFile="$env:GITHUB_WORKSPACE\known_hosts" memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
