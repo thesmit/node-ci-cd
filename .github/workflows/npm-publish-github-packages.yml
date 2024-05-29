@@ -26,7 +26,7 @@ jobs:
     - name: Add SSH Key
       shell: pwsh
       run: |
-          $sshDir = "$HOME/.ssh"
+          $sshDir = "$env:RUNNER_TEMP/ssh"
           if (-Not (Test-Path -Path $sshDir)) {
             New-Item -ItemType Directory -Path $sshDir
           }
@@ -39,7 +39,8 @@ jobs:
     - name: Check SSH Key
       shell: pwsh
       run: |
-          ssh -i $HOME/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+          $sshDir = "$env:RUNNER_TEMP/ssh"
+          ssh -i "$sshDir/id_rsa" memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
