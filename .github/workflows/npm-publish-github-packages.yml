@@ -23,26 +23,9 @@ jobs:
     #     chmod 600 ~/.ssh/id_rsa
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
 
-    - name: Prepare SSH Key
-      shell: pwsh
-      run: |
-          $sshDir = "$env:GITHUB_WORKSPACE\ssh"
-          if (-Not (Test-Path -Path $sshDir)) {
-            New-Item -ItemType Directory -Path $sshDir
-          }
-          $privateKey = "${{ secrets.SSH_PRIVATE_KEY }}"
-          $privateKey | Out-File -FilePath "$sshDir\id_rsa" -Encoding ascii
-          icacls "$sshDir\id_rsa" /inheritance:r
-          icacls "$sshDir\id_rsa" /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(F)"
-          icacls "$sshDir\id_rsa" /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(R,W)"
-          ssh-keyscan 192.168.29.120 | Out-File -Append -Encoding ASCII "$sshDir\known_hosts"
-
     - name: Check SSH Key
-      shell: pwsh
       run: |
-          $sshDir = "$env:GITHUB_WORKSPACE\ssh"
-          Get-ChildItem -Path $sshDir -Recurse | Format-List -Property *
-          ssh -i "$sshDir\id_rsa" -o UserKnownHostsFile="$sshDir\known_hosts" memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+          ssh -i ~/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
