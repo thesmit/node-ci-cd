@@ -32,6 +32,7 @@ jobs:
           }
           Set-Content -Path "$sshDir/id_rsa" -Value "${{ secrets.SSH_PRIVATE_KEY }}" -Force
           icacls "$sshDir/id_rsa" /inheritance:r
+          icacls "$sshDir/id_rsa" /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(F)"
           icacls "$sshDir/id_rsa" /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(R,W)"
           ssh-keyscan 192.168.29.120 | Out-File -Append -Encoding ASCII "$sshDir/known_hosts"
 
