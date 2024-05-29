@@ -24,14 +24,8 @@ jobs:
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
 
     - name: Check SSH Key
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-          host: 192.168.29.120
-          username: memighty-test-server
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            whoami
-            pwd
+      run: |
+        ssh -o StrictHostKeyChecking=no memighty-test-server@192.168.29.120
 
     - name: Deploy Backend
       env:
