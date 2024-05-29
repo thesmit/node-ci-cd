@@ -26,7 +26,9 @@ jobs:
     - name: Check SSH Key
       run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
-          icacls ./id_rsa /grant:r "$env:USERNAME:(R)"
+          icacls ./id_rsa /inheritance:r
+          icacls ./id_rsa /grant:r $env:USERNAME:F
+          icacls ./id_rsa /remove "NT AUTHORITY\SYSTEM" "BUILTIN\Administrators" "BUILTIN\Users"
           ssh -i ./id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
