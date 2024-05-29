@@ -23,9 +23,17 @@ jobs:
     #     chmod 600 ~/.ssh/id_rsa
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
     
+
+    - name: Add SSH Key
+      run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan 192.168.29.120 >> ~/.ssh/known_hosts
+
     - name: Check SSH Key
       run: |
-        ssh -i ~/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
+          ssh -i ~/.ssh/id_rsa memighty-test-server@192.168.29.120 'echo "SSH Key is working"'
 
     - name: Deploy Backend
       env:
