@@ -1,0 +1,49 @@
+name: Deploy to memighty test-server from windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: windows-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js for Backend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.10.0'
+          working-directory: ./eums_backend
+
+      - name: Deploy Backend
+        env:
+          ENV_CONTENTS: ${{ secrets.BACKEND_ENV_MDM_DGVCL_CO_IN }}
+        run: |
+          echo "$ENV_CONTENTS" > eums_backend/.env
+          scp -r ./eums_backend/ memighty-test-server@192.168.29.120:/var/www/
+
+      - name: Install and Start Backend
+        run: |
+          ssh memighty-test-server@192.168.29.120 'cd /var/www/eums_backend && whoami && export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && npm install && pm2 restart app.js || pm2 start  app.js'
+
+      - name: Setup Node.js for Frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.10.0'
+          working-directory: ./eums_frontend
+
+      - name: Build Frontend
+        env:
+          CLIENT1_FRONTEND_ENV: ${{ secrets.FRONTEND_ENV_MDM_DGVCL_CO_IN }}
+        run: |
+          echo "$CLIENT1_FRONTEND_ENV" > eums_frontend/.env
+          cd eums_frontend 
+          npm install --force
+          $env:CI="false"
+          $env:NODE_OPTIONS="--max-old-space-size=4096"
+          npm run build
+
+      - name: Deploy Frontend
+        run: |
+          scp -r ./eums_frontend/build/ memighty-test-server@192.168.29.120:/var/www/
