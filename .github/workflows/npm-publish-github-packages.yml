@@ -27,7 +27,7 @@ jobs:
       env:
         ENV_CONTENTS: ${{ secrets.CLIENT1_ENV }}
       run: |
-        echo "$ENV_CONTENTS" > backend/.env
+        # echo "$ENV_CONTENTS" > backend/.env
         pwd
         scp -r ./backend/ memighty-test-server@192.168.29.120:/var/www/
 
