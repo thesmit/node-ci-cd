@@ -25,7 +25,7 @@ jobs:
 
     - name: Check SSH Key
       run: |
-        ssh -o StrictHostKeyChecking=no memighty-test-server@192.168.29.120
+        ssh memighty-test-server@192.168.29.120 'logout'
 
     - name: Deploy Backend
       env:
@@ -33,12 +33,7 @@ jobs:
       run: |
         echo "$ENV_CONTENTS" > backend/.env
         pwd
-        echo "Starting SCP transfer with verbose output"
-        scp -vvv -i $HOME/.ssh/id_rsa -r ./eums_backend/ memighty-test-server@192.168.29.120:/var/www/
-          if ($LASTEXITCODE -ne 0) {
-            Write-Host "SCP command failed"
-            exit 1
-          }
+        scp -r ./eums_backend/ memighty-test-server@192.168.29.120:/var/www/
 
     - name: Install and Start Backend
       uses: appleboy/ssh-action@v1.0.3
