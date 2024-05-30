@@ -24,9 +24,13 @@ jobs:
     #     ssh-keyscan -H 192.168.29.32 >> ~/.ssh/known_hosts
 
 
+    - name: Add SSH key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
     - name: Check SSH Key
-      run: |
-        ssh -v -i ~/.ssh/id-rsa memighty-test-server@192.168.29.120 'logout'
+      run: ssh -v memighty-test-server@192.168.29.120 'logout'
 
     - name: Deploy Backend
       env:
