@@ -30,8 +30,7 @@ jobs:
     #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Check SSH Key
-      run: ssh -v memighty-test-server@192.168.29.120 'logout'
-      shell: bash
+      run: ssh memighty-test-server@192.168.29.120
 
     - name: Deploy Backend
       env:
@@ -40,7 +39,6 @@ jobs:
         echo "$ENV_CONTENTS" > backend/.env
         pwd
         scp -r ./eums_backend/ memighty-test-server@192.168.29.120:/var/www/
-      shell: bash
 
     - name: Install and Start Backend
       uses: appleboy/ssh-action@v1.0.3
